@@ -1,4 +1,3 @@
-import os
 import argparse
 from pathlib import Path
 from tqdm import tqdm
@@ -11,10 +10,9 @@ class Img2Vid:
         self.path = path
         self.outdir = outdir
         self.ext = ext
-        self.cores = os.cpu_count()
         self.make_outdir()
         self.read_imgs()
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
         self.video = cv2.VideoWriter(f"{self.outdir}/{self.path.stem}.mp4", fourcc, fps, (self.w, self.h))
 
     def make_outdir(self):
@@ -25,7 +23,7 @@ class Img2Vid:
 
     def read_imgs(self):
         self.paths = sorted(list(self.path.glob(f"*.{self.ext}")))
-        self.w, self.h, _ = cv2.imread(str(self.paths[0])).shape
+        self.h, self.w, _ = cv2.imread(str(self.paths[0])).shape
 
     def save_images(self):
         for path in tqdm(self.paths):
@@ -40,7 +38,7 @@ if __name__ == '__main__':
                         help="Path to the input video.")
     parser.add_argument("-o", "--outdir", type=Path,
                         help="Directory to save the frames.")
-    parser.add_argument("-f", "--fps", type=int, default=29.5,
+    parser.add_argument("-f", "--fps", type=float, default=29.5,
                         help="Interval between the frames to save.")
     parser.add_argument("-e", "--extention", type=str, default="png",
                         help="Extension to glob images as.")
